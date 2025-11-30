@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>시험 계획표</title>
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: "Noto Sans KR", sans-serif;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .top-box {
+            width: 80%;
+            margin: 0 auto 20px auto;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #4a76ff;
+            color: white;
+        }
+
+        .editable {
+            cursor: pointer;
+        }
+
+        .editable:focus {
+            outline: 2px solid #4a76ff;
+            background: #eef4ff;
+        }
+
+        .add-btn {
+            margin: 20px auto;
+            display: block;
+            padding: 10px 20px;
+            font-size: 15px;
+            background: #4a76ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #2f54d1;
+        }
+
+        .delete-btn {
+            background:#ff4d4d;
+            color:white;
+            border:none;
+            padding:5px 10px;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        .delete-btn:hover {
+            background:#d63030;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>📚 시험 계획표</h1>
+
+<div class="top-box">
+    <label>시험 날짜 선택: </label>
+    <input type="date" id="examDate" onchange="updateDDay()">
+    <div class="dday" id="ddayText">시험 날짜를 선택하세요.</div>
+</div>
+
+<table id="planTable">
+    <tr>
+        <th>요일</th>
+        <th>과목</th>
+        <th>공부 내용</th>
+        <th>완료</th>
+        <th>삭제</th>
+    </tr>
+</table>
+
+<button class="add-btn" onclick="addRow()">+ 과목 추가하기</button>
+
+<script>
+
+/* -------------------------------
+   D-Day 계산
+-------------------------------- */
+function updateDDay() {
+    const dateInput = document.getElementById("examDate").value;
+    const ddayText = document.getElementById("ddayText");
+    if (!dateInput) return;
+
+    const today = new Date();
+    const exam = new Date(dateInput);
+    const diff = Math.ceil((exam - today) / (1000 * 60 * 60 * 24));
+
+    ddayText.innerHTML = `📌 D-${diff}`;
+}
+
+/* -------------------------------
+   줄 추가 기능
+-------------------------------- */
+function addRow() {
+    const table = document.getElementById("planTable");
+    const rowCount = table.rows.length;
+    const id = rowCount;
+
+    const row = table.insertRow(-1);
+    row.innerHTML = `
+        <td class="editable" contenteditable="true" id="day${id}">요일 입력</td>
+        <td class="editable" contenteditable="true" id="subject${id}">과목 입력</td>
+        <td class="editable" contenteditable="true" id="study${id}">공부 내용 입력</td>
+        <td><input type="checkbox" id="check${id}" onchange="saveCheck(this)"></td>
+        <td><button class="delete-btn" onclick="deleteRow(this)">삭제</button></td>
+    `;
+
+    attachEditableListener();
+    saveTableStructure(); 
+}
+
+/* -------------------------------
+   줄 삭제 기능
+-------------------------------- */
+function deleteRow(btn) {
+    const row = btn.parentNode.parentNode;
+    const table = document.getElementById("planTable");
+
+    // localStorage에서 해당 줄 데이터 삭제
+    row.querySelectorAll(".editable, input[type='checkbox']").forEach(el => {
+        if (el.id) localStorage.removeItem(el.id);
+    });
+
+    table.deleteRow(row.rowIndex);
+    saveTableStructure();
+}
+
+/* -------------------------------
+   체크박스 저장
+-------------------------------- */
+function saveCheck(box) {
+    localStorage.setItem(box.id, box.checked);
+}
+
+/* -------------------------------
+   체크박스 불러오기
+-------------------------------- */
+function loadChecks() {
+    const boxes = document.querySelectorAll("input[type='checkbox']");
+    boxes.forEach(box => {
+        if (localStorage.getItem(box.id) === "true") {
+            box.checked = true;
+        }
+    });
+}
+
+/* -------------------------------
+   공부 내용 저장
+-------------------------------- */
+function saveStudyContents() {
+    const items = document.querySelectorAll(".editable");
+    items.forEach(item => {
+        localStorage.setItem(item.id, item.innerText);
+    });
+}
+
+/* -------------------------------
+   공부 내용 불러오기
+-------------------------------- */
+function loadStudyContents() {
+    const items = document.querySelectorAll(".editable");
+    items.forEach(item => {
+        const saved = localStorage.getItem(item.id);
+        if (saved) item.innerText = saved;
+    });
+}
+
+/* -------------------------------
+   테이블 구조 저장
+-------------------------------- */
+function saveTableStructure() {
+    const table = document.getElementById("planTable").innerHTML;
+    localStorage.setItem("tableHTML", table);
+}
+
+/* -------------------------------
+   테이블 구조 불러오기
+-------------------------------- */
+function loadTableStructure() {
+    const saved = localStorage.getItem("tableHTML");
+    if (saved) {
+        document.getElementById("planTable").innerHTML = saved;
+    }
+}
+
+/* -------------------------------
+   contenteditable 입력 감지
+-------------------------------- */
+function attachEditableListener() {
+    document.querySelectorAll(".editable").forEach(el => {
+        el.addEventListener("input", () => {
+            saveStudyContents();
+            saveTableStructure();
+        });
+    });
+}
+
+/* -------------------------------
+   페이지 처음 열릴 때 실행
+-------------------------------- */
+window.onload = function() {
+    loadTableStructure();
+    loadStudyContents();
+    loadChecks();
+    attachEditableListener();
+};
+
+</script>
+
+</body>
+</html>

@@ -6,7 +6,7 @@ form.addEventListener("submit", function(event) {
   const id = document.getElementById("userId").value;
   const pw = document.getElementById("userPw").value;
 
-  if (id === "lol" && pw === "1023") {
+  if (id === "hs1234" && pw === "cbhs1234!") {
     alert("로그인 성공!");
   } else {
     alert("아이디 또는 비밀번호가 틀렸습니다.");

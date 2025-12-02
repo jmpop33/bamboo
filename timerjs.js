@@ -1,5 +1,5 @@
 let timer = null;    
-let centiseconds = 0;   // 1/100초 단위로 저장
+let centiseconds = 0;
 
 function updateDisplay() {
     let totalSeconds = Math.floor(centiseconds / 100);
@@ -8,7 +8,7 @@ function updateDisplay() {
     let mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
     let secs = String(totalSeconds % 60).padStart(2, '0');
 
-    let cs = String(centiseconds % 100).padStart(2, '0');   // 1/100초
+    let cs = String(centiseconds % 100).padStart(2, '0'); 
 
     document.getElementById("display").innerText = `${hrs}:${mins}:${secs}:${cs}`;
 }
@@ -18,7 +18,7 @@ function startTimer() {
         timer = setInterval(() => {
             centiseconds++;
             updateDisplay();
-        }, 10);   // 0.01초(1/100초)마다 갱신
+        }, 10);
     }
 }
 

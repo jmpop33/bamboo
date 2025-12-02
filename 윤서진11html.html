@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>두꺼비집 로그인</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: sans-serif;
+      background-color: #f0f6ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: white;
+      padding: 50px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+    .login-container h1 {
+      margin-bottom: 10px;
+      color: #004080;
+    }
+    .login-container p {
+      margin-bottom: 20px;
+      color: #555;
+      font-size: 14px;
+    }
+    .login-container input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+    .login-container button {
+      width: 100%;
+      padding: 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 17px;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+    .login-container button:hover {
+      background-color: #0056b3;
+    }
+    .options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .options a {
+      font-size: 14px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .options a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>두꺼비집</h1>
+    <p>홈페이지를 방문해주셔서 감사합니다.</p>
+
+    <form>
+      <input type="text" placeholder="아이디" required>
+      <input type="password" placeholder="비밀번호" required>
+      <button type="submit">로그인</button>
+    </form>
+
+    <div class="options">
+      <a href="#">아이디 찾기</a>
+      <a href="#">비밀번호 찾기</a>
+      <a href="#">회원가입</a>
+    </div>
+  </div>
+</body>
+</html>

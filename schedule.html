@@ -108,9 +108,6 @@
 
 <script>
 
-/* -------------------------------
-   D-Day 계산
--------------------------------- */
 function updateDDay() {
     const dateInput = document.getElementById("examDate").value;
     const ddayText = document.getElementById("ddayText");
@@ -123,9 +120,6 @@ function updateDDay() {
     ddayText.innerHTML = `📌 D-${diff}`;
 }
 
-/* -------------------------------
-   줄 추가 기능
--------------------------------- */
 function addRow() {
     const table = document.getElementById("planTable");
     const rowCount = table.rows.length;
@@ -144,14 +138,10 @@ function addRow() {
     saveTableStructure(); 
 }
 
-/* -------------------------------
-   줄 삭제 기능
--------------------------------- */
 function deleteRow(btn) {
     const row = btn.parentNode.parentNode;
     const table = document.getElementById("planTable");
 
-    // localStorage에서 해당 줄 데이터 삭제
     row.querySelectorAll(".editable, input[type='checkbox']").forEach(el => {
         if (el.id) localStorage.removeItem(el.id);
     });
@@ -160,16 +150,10 @@ function deleteRow(btn) {
     saveTableStructure();
 }
 
-/* -------------------------------
-   체크박스 저장
--------------------------------- */
 function saveCheck(box) {
     localStorage.setItem(box.id, box.checked);
 }
 
-/* -------------------------------
-   체크박스 불러오기
--------------------------------- */
 function loadChecks() {
     const boxes = document.querySelectorAll("input[type='checkbox']");
     boxes.forEach(box => {
@@ -179,9 +163,6 @@ function loadChecks() {
     });
 }
 
-/* -------------------------------
-   공부 내용 저장
--------------------------------- */
 function saveStudyContents() {
     const items = document.querySelectorAll(".editable");
     items.forEach(item => {
@@ -189,9 +170,6 @@ function saveStudyContents() {
     });
 }
 
-/* -------------------------------
-   공부 내용 불러오기
--------------------------------- */
 function loadStudyContents() {
     const items = document.querySelectorAll(".editable");
     items.forEach(item => {
@@ -200,17 +178,11 @@ function loadStudyContents() {
     });
 }
 
-/* -------------------------------
-   테이블 구조 저장
--------------------------------- */
 function saveTableStructure() {
     const table = document.getElementById("planTable").innerHTML;
     localStorage.setItem("tableHTML", table);
 }
 
-/* -------------------------------
-   테이블 구조 불러오기
--------------------------------- */
 function loadTableStructure() {
     const saved = localStorage.getItem("tableHTML");
     if (saved) {
@@ -218,9 +190,6 @@ function loadTableStructure() {
     }
 }
 
-/* -------------------------------
-   contenteditable 입력 감지
--------------------------------- */
 function attachEditableListener() {
     document.querySelectorAll(".editable").forEach(el => {
         el.addEventListener("input", () => {
@@ -230,9 +199,6 @@ function attachEditableListener() {
     });
 }
 
-/* -------------------------------
-   페이지 처음 열릴 때 실행
--------------------------------- */
 window.onload = function() {
     loadTableStructure();
     loadStudyContents();

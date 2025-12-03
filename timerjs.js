@@ -33,3 +33,11 @@ function resetTimer() {
     centiseconds = 0;
     updateDisplay();
 }
+
+window.onload = () => {
+    const isLogin = sessionStorage.getItem("login");
+    if (isLogin !== "true"){
+        alert("로그인이 필요합니다");
+        location = "login.html";
+    }
+}

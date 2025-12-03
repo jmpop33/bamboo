@@ -14,3 +14,7 @@ form.addEventListener("submit", function(event) {
     alert("아이디 또는 비밀번호가 틀렸습니다.");
   }
 });
+
+funtion notpro() {
+  alert("지원하지 않는 기능입니다.")
+}

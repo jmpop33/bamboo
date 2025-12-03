@@ -47,9 +47,25 @@
 <ul id="menu">
     <li><a onclick="location.href='schedule.html'">스케줄 짜기</a></li>
     <li><a onclick="location.href='timer.html'">타이머</a></li>
-    <li><a onclick="location.href='login.html'">로그아웃</a></li>
+    <li><a onclick="logout()">로그아웃</a></li>
 </ul>
 </style>
 
-</html>
+<script>
+    window.onload = () => {
+        const isLogin = sessionStorage.getItem("login");
+        
+        if (isLogin !== "true"){
+            alert("로그인이 필요합니다");
+            location = "lgoin/login.html";
+        }
+    }
 
+    function logout() {
+        sessionStorage.removeItem("login");
+        alert("로그아웃 되었습니다.");
+        location.href = "login.html";
+    }
+</script>
+
+</html>

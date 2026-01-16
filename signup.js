@@ -5,7 +5,7 @@ const msg = document.getElementById("idCheckMsg");
 
 let isIdChecked = false;
 
-/* 아이디 중복 확인 */
+// 아이디 중복 확인
 checkBtn.addEventListener("click", function () {
   const id = idInput.value.trim();
   if (!id) {
@@ -28,38 +28,45 @@ checkBtn.addEventListener("click", function () {
   }
 });
 
-/* 아이디 변경 시 중복확인 초기화 */
+// 아이디 변경 시 다시 체크
 idInput.addEventListener("input", function () {
   isIdChecked = false;
   msg.textContent = "";
 });
 
-/* 회원가입 */
+// 회원가입 제출
 form.addEventListener("submit", function (e) {
-  e.preventDefault(); // ⭐ 제일 중요
+  e.preventDefault();
 
   if (!isIdChecked) {
     alert("아이디 중복 확인을 해주세요.");
     return;
   }
 
-  const name = document.getElementById("name").value;
-  const age = document.getElementById("age").value;
-  const school = document.getElementById("school").value;
-  const id = idInput.value;
-  const pw = document.getElementById("pw").value;
+  const name = document.getElementById("name").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const school = document.getElementById("school").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const id = document.getElementById("id").value.trim();
+  const pw = document.getElementById("pw").value.trim();
 
   const users = JSON.parse(localStorage.getItem("users")) || [];
 
-  // 최종 중복 방어
   if (users.find(user => user.id === id)) {
     alert("이미 존재하는 아이디입니다.");
     return;
   }
 
-  users.push({ name, age, school, id, pw });
-  localStorage.setItem("users", JSON.stringify(users));
+  users.push({
+    name,
+    age,
+    school,
+    phone,
+    id,
+    pw
+  });
 
+  localStorage.setItem("users", JSON.stringify(users));
   alert("회원가입이 완료되었습니다!");
   location.href = "login.html";
 });

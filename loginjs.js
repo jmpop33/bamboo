@@ -18,6 +18,7 @@ form.addEventListener("submit", function (e) {
 
   if (user) {
     alert("로그인 성공!");
+    sessionStorage.setItem("login", "true");
     sessionStorage.setItem("loginUser", id);
     location.href = "main.html";
   } else {

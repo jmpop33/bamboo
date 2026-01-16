@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>학습 일정 캘린더</title>
+
+<style>
+body {
+  font-family: Pretendard, Arial, sans-serif;
+  background: #f1f3f7;
+  padding: 20px;
+}
+
+h1 { text-align: center; }
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+}
+
+input, select, textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+textarea { height: 60px; resize: none; }
+
+button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background: #4a6cff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover { opacity: 0.9; }
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 14px;
+}
+
+.day {
+  text-align: center;
+  font-weight: bold;
+  background: #eef1f7;
+  padding: 6px;
+}
+
+.cell {
+  min-height: 95px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  background: #fafbff;
+}
+
+.event {
+  margin-top: 4px;
+  padding: 4px 6px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.event:hover {
+  outline: 2px solid rgba(0,0,0,0.15);
+}
+
+.done {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.exam { background: #ffd6d6; }
+.assignment { background: #d6e4ff; }
+.task { background: #d6ffe5; }
+
+.warning {
+  color: #e03131;
+  font-size: 13px;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.analysis {
+  margin-top: 12px;
+  font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📘 수행평가 · 시험 학습 캘린더</h1>
+
+<div class="container">
+
+<form id="eventForm" class="card">
+  <h3>📌 일정 추가</h3>
+  <select id="type">
+    <option value="assignment">수행평가</option>
+    <option value="exam">시험</option>
+    <option value="task">과제</option>
+  </select>
+  <input id="subject" placeholder="과목명" required>
+  <input id="date" type="date" required>
+  <textarea id="memo" placeholder="메모"></textarea>
+  <button>추가</button>
+  <div id="warning" class="warning"></div>
+  <div id="analysis" class="analysis"></div>
+</form>
+
+<div class="card">
+  <div class="calendar-header">
+    <button onclick="changeMonth(-1)">◀</button>
+    <h2 id="monthYear"></h2>
+    <button onclick="changeMonth(1)">▶</button>
+  </div>
+  <div class="grid" id="calendarGrid"></div>
+</div>
+
+</div>
+
+<script>
+let events = JSON.parse(localStorage.getItem("events")) || [];
+let currentDate = new Date();
+
+eventForm.onsubmit = e => {
+  e.preventDefault();
+  events.push({
+    id: Date.now(),
+    type: type.value,
+    subject: subject.value,
+    date: date.value,
+    memo: memo.value,
+    delay: 0,
+    done: false
+  });
+  save();
+  eventForm.reset();
+};
+
+function save(){
+  localStorage.setItem("events", JSON.stringify(events));
+  renderCalendar();
+  analyze();
+}
+
+function changeMonth(n){
+  currentDate.setMonth(currentDate.getMonth() + n);
+  renderCalendar();
+}
+
+function renderCalendar(){
+  calendarGrid.innerHTML = "";
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  monthYear.textContent = `${y}년 ${m+1}월`;
+
+  ["일","월","화","수","목","금","토"].forEach(d=>{
+    const div=document.createElement("div");
+    div.className="day";
+    div.textContent=d;
+    calendarGrid.appendChild(div);
+  });
+
+  const first=new Date(y,m,1).getDay();
+  const last=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++) calendarGrid.appendChild(document.createElement("div"));
+
+  for(let d=1; d<=last; d++){
+    const cell=document.createElement("div");
+    cell.className="cell";
+    cell.innerHTML=`<strong>${d}</strong>`;
+    const dateStr=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+    events.filter(e=>e.date===dateStr).forEach(e=>{
+      const ev=document.createElement("div");
+      ev.className=`event ${e.type} ${e.done?"done":""}`;
+      ev.textContent =
+        `${e.subject}${e.delay>=2?" ⚠️":""}${isRiskExam(e)?" 🔥":""}`;
+      ev.onclick=()=>editEvent(e.id);
+      cell.appendChild(ev);
+    });
+
+    calendarGrid.appendChild(cell);
+  }
+}
+
+function editEvent(id){
+  const e = events.find(v=>v.id===id);
+  const action = prompt(
+`1: 완료 / 취소
+2: 날짜 수정
+3: 삭제`, "1");
+
+  if(action==="1") e.done=!e.done;
+
+  if(action==="2"){
+    const newDate = prompt("새 날짜 (YYYY-MM-DD)", e.date);
+    if(newDate && newDate!==e.date && new Date(newDate)>=new Date()){
+      e.date=newDate;
+      e.delay++;
+    }
+  }
+
+  if(action==="3"){
+    if(confirm("정말 이 일정을 삭제할까요?")){
+      events=events.filter(v=>v.id!==id);
+    }
+  }
+  save();
+}
+
+function isRiskExam(e){
+  if(e.type!=="exam") return false;
+  const days=(new Date(e.date)-new Date())/86400000;
+  if(days<0 || days>7) return false;
+
+  const samePeriod = events.filter(v=>{
+    const diff=Math.abs(new Date(v.date)-new Date(e.date))/86400000;
+    return diff<=3 && v.id!==e.id;
+  });
+
+  return !e.done || e.delay>=2 || samePeriod.length>=2;
+}
+
+function analyze(){
+  let warn="";
+  const map={};
+  events.forEach(e=>map[e.date]=(map[e.date]||0)+1);
+  if(Object.values(map).some(v=>v>=3)) warn="⚠️ 같은 날 일정이 너무 많아요";
+
+  const week = events.filter(e=>new Date(e.date)-new Date()<7*86400000);
+  const rate = week.length
+    ? Math.round(week.filter(e=>e.done).length/week.length*100)
+    : 0;
+
+  const riskExams = events.filter(isRiskExam)
+    .map(e=>`🔥 ${e.subject} (${e.date})`)
+    .join("<br>");
+
+  warning.textContent = warn;
+  analysis.innerHTML = `
+📊 분석<br>
+- 이번 주 목표 달성률: ${rate}%<br>
+- 위험 시험:<br>${riskExams || "없음"}
+`;
+}
+
+renderCalendar();
+analyze();
+</script>
+
+</body>
+</html>

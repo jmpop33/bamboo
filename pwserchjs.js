@@ -1,15 +1,20 @@
 const form = document.getElementById("pwserch");
 
 form.addEventListener("submit", function(event) {
-  event.preventDefault(); 
+  event.preventDefault();
 
-  const un = document.getElementById("username").value;
-  const pn = document.getElementById("phnumber").value;
+  const name = document.getElementById("username").value.trim();
+  const school = document.getElementById("school").value.trim();
+  const phone = document.getElementById("phnumber").value.trim();
 
-  if (un === "김형석" && pn === "01011223344") {
-    alert("비밀번호 찾기 성공!");
-    alert("비밀번호: cbhs1234!")
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+
+  // 이름 + 학교 + 전화번호 일치하는 사용자 찾기
+  const user = users.find(u => u.name === name && u.school === school && u.phone === phone);
+
+  if (user) {
+    alert("비밀번호 찾기 성공!\n비밀번호: " + user.pw);
   } else {
-    alert("존재하지 않는 정보입니다.");
+    alert("일치하는 회원 정보가 없습니다.");
   }
 });

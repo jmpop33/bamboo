@@ -6,7 +6,6 @@ form.addEventListener("submit", function (e) {
   const id = document.getElementById("userId").value;
   const pw = document.getElementById("userPw").value;
 
-  /* 🔐 관리자 계정 */
   if (id === "hshs1234" && pw === "cbhs4321!") {
     alert("관리자 로그인 성공");
     sessionStorage.setItem("admin", "true");
@@ -14,7 +13,6 @@ form.addEventListener("submit", function (e) {
     return;
   }
 
-  /* 👤 일반 사용자 */
   const users = JSON.parse(localStorage.getItem("users")) || [];
   const user = users.find(u => u.id === id && u.pw === pw);
 

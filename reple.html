@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>시험 후 리플렉션</title>
+
+<style>
+:root{
+  --main:#1f2937;
+  --accent:#2563eb;
+  --bg:#f3f4f6;
+  --card:#ffffff;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:var(--bg);
+}
+
+header{
+  background:var(--main);
+  color:white;
+  padding:18px;
+  text-align:center;
+}
+
+.container{
+  max-width:880px;
+  margin:20px auto;
+  padding:0 15px;
+}
+
+.box{
+  background:var(--card);
+  padding:18px;
+  border-radius:12px;
+  margin-bottom:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+}
+
+h3{
+  margin:0 0 12px;
+  color:var(--main);
+}
+
+label{
+  font-weight:600;
+  margin-top:10px;
+  display:block;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  font-size:14px;
+}
+
+textarea{ min-height:80px; }
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.check{
+  background:#f9fafb;
+  padding:10px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.saved{
+  margin-top:8px;
+  font-size:12px;
+  color:green;
+}
+
+.analysis{
+  font-size:14px;
+  line-height:1.6;
+  margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>📝 시험 후 리플렉션</h2>
+  <div style="font-size:12px;">모든 입력 내용은 자동 저장됩니다</div>
+</header>
+
+<div class="container">
+
+<div class="box">
+  <div class="grid">
+    <div>
+      <label>과목</label>
+      <select id="subject">
+        <option>수학</option>
+        <option>국어</option>
+        <option>영어</option>
+        <option>과학</option>
+        <option>사회</option>
+      </select>
+    </div>
+    <div>
+      <label>시험 종류</label>
+      <select id="examType">
+        <option>중간고사</option>
+        <option>기말고사</option>
+        <option>모의고사</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>예상 점수</label>
+      <input type="number" id="expected">
+    </div>
+    <div>
+      <label>실제 점수</label>
+      <input type="number" id="actual">
+    </div>
+  </div>
+
+  <label>체감 난이도</label>
+  <input type="range" min="1" max="5" id="difficulty">
+</div>
+
+<div class="box">
+  <h3>⚠️ 시험 중 실수 유형</h3>
+  <div class="grid">
+    <label class="check"><input type="checkbox" data-key="mistake"> 계산 실수</label>
+    <label class="check"><input type="checkbox" data-key="mistake"> 문제 해석 오류</label>
+    <label class="check"><input type="checkbox" data-key="mistake"> 시간 부족</label>
+    <label class="check"><input type="checkbox" data-key="mistake"> 긴장으로 인한 실수</label>
+  </div>
+</div>
+
+<div class="box">
+  <label>🚀 다음 시험 개선 전략</label>
+  <textarea id="plan"></textarea>
+</div>
+
+<div class="box">
+  <h3>📊 자동 분석 결과</h3>
+  <div id="analysis" class="analysis"></div>
+  <div class="saved" id="savedMsg"></div>
+</div>
+
+</div>
+
+<script>
+const inputs = document.querySelectorAll("input, textarea, select");
+const key = "reflection_auto";
+
+function save(){
+  const data = {};
+  let filled = 0;
+
+  inputs.forEach(el=>{
+    if(el.type==="checkbox"){
+      if(!data[el.dataset.key]) data[el.dataset.key]=[];
+      if(el.checked) data[el.dataset.key].push(el.parentElement.innerText.trim());
+    } else {
+      data[el.id]=el.value;
+      if(el.value) filled++;
+    }
+  });
+
+  localStorage.setItem(key, JSON.stringify(data));
+  analyze(data, filled);
+  savedMsg.innerText="✔ 자동 저장됨";
+  setTimeout(()=>savedMsg.innerText="",1200);
+}
+
+function analyze(data, filled){
+  let result = "";
+
+  if(data.expected && data.actual){
+    const diff = data.actual - data.expected;
+    result += `<b>📈 점수 분석</b><br>`;
+    if(Math.abs(diff)<=5) result += "🎯 자기 평가 정확<br>";
+    else if(diff<0) result += "⚠️ 예상보다 낮음 → 실수/난이도 판단 필요<br>";
+    else result += "👍 예상보다 높음 → 실력 과소평가 경향<br>";
+  }
+
+  if(data.mistake?.length){
+    result += `<br><b>🛠 개선 전략</b><br>`;
+    if(data.mistake.includes("계산 실수")) result += "- 계산 전용 문제 반복 연습<br>";
+    if(data.mistake.includes("시간 부족")) result += "- 시간 제한 문제 풀이 훈련<br>";
+    if(data.mistake.includes("문제 해석 오류")) result += "- 문제 조건 표시 습관화<br>";
+    if(data.mistake.includes("긴장으로 인한 실수")) result += "- 실전 모의 연습 필요<br>";
+  }
+
+  const percent = Math.round((filled/7)*100);
+  result += `<br><b>📌 리플렉션 완성도</b>: ${percent}%`;
+
+  analysis.innerHTML = result;
+}
+
+inputs.forEach(el=>{
+  el.addEventListener("input",save);
+  el.addEventListener("change",save);
+});
+
+(function load(){
+  const data = JSON.parse(localStorage.getItem(key)||"{}");
+  inputs.forEach(el=>{
+    if(el.type==="checkbox"){
+      el.checked = data[el.dataset.key]?.includes(el.parentElement.innerText.trim());
+    } else {
+      el.value = data[el.id] || "";
+    }
+  });
+  save();
+})();
+</script>
+
+</body>
+</html>

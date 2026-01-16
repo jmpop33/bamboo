@@ -3,8 +3,6 @@ import math
 
 app = Flask(__name__)
 
-# ====== 후보 저장소(서버 메모리) ======
-# (진짜 서비스면 DB로 바꾸면 됨)
 candidates = []
 next_id = 1
 
@@ -55,7 +53,6 @@ def api_add_candidate():
     global next_id
     data = request.get_json(force=True)
 
-    # 간단 검증
     if not data.get("subjects"):
         return jsonify({"error": "과목을 최소 1개는 선택해야 함"}), 400
 
@@ -98,7 +95,6 @@ def api_recommend():
     if not candidates:
         return jsonify({"error": "후보가 없음"}), 400
 
-    # 필수 조건: 학년 같아야 함 (네 JS와 동일)
     filtered = [c for c in candidates if c["grade"] == me["grade"]]
 
     if not filtered:

@@ -1,25 +1,77 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>아이디 찾기</title>
-<style>
-body { font-family: sans-serif; background-color: #f0f6ff; display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
-form { background:white; padding:40px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1); display:flex; flex-direction:column; width:300px; }
-input, button { margin:8px 0; padding:10px; border-radius:5px; font-size:14px; }
-button { background-color:#007bff; color:white; border:none; cursor:pointer; }
-button:hover { background-color:#0056b3; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>두꺼비집 아이디 찾기</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: sans-serif;
+            background-color: #f0f6ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #004080;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 17px;
+            color: white;
+            background-color: #007bff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .back-btn {
+            margin-top: 15px;
+            background-color: #6c757d;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
 <body>
 
-<form id="idserch">
-  <input type="text" id="username" placeholder="이름" required>
-  <input type="text" id="school" placeholder="소속 학교" required>
-  <input type="text" id="phnumber" placeholder="전화번호" required>
-  <button type="submit">아이디 찾기</button>
-</form>
+<div class="container">
+    <h1>아이디 찾기</h1>
+    <form id="pwserch">
+        <input type="text" id="username" placeholder="이름" required>
+        <input type="text" id="school" placeholder="소속 학교" required>
+        <input type="text" id="phnumber" placeholder="전화번호 (숫자만)" required>
+        <button type="submit">아이디 찾기</button>
+    </form>
+    <button class="back-btn" onclick="location.href='login.html'">로그인 화면으로 돌아가기</button>
+</div>
 
-<script src="idserch.js"></script>
+<script src="idserchjs.js"></script>
 </body>
 </html>

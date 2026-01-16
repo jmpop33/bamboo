@@ -5,7 +5,6 @@ const msg = document.getElementById("idCheckMsg");
 
 let isIdChecked = false;
 
-// 아이디 중복 확인
 checkBtn.addEventListener("click", function () {
   const id = idInput.value.trim();
   if (!id) {
@@ -28,13 +27,11 @@ checkBtn.addEventListener("click", function () {
   }
 });
 
-// 아이디 변경 시 다시 체크
 idInput.addEventListener("input", function () {
   isIdChecked = false;
   msg.textContent = "";
 });
 
-// 회원가입 제출
 form.addEventListener("submit", function (e) {
   e.preventDefault();
 

@@ -9,7 +9,6 @@ form.addEventListener("submit", function(event) {
 
   const users = JSON.parse(localStorage.getItem("users")) || [];
 
-  // 이름 + 학교 + 전화번호 일치하는 사용자 찾기
   const user = users.find(u => u.name === name && u.school === school && u.phone === phone);
 
   if (user) {

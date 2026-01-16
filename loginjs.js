@@ -19,7 +19,6 @@ form.addEventListener("submit", function (e) {
   if (user) {
     alert("로그인 성공!");
     sessionStorage.setItem("login", "true");
-    sessionStorage.setItem("loginUser", id);
     location.href = "main.html";
   } else {
     alert("아이디 또는 비밀번호가 틀렸습니다.");

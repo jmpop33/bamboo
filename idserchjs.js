@@ -1,15 +1,18 @@
 const form = document.getElementById("idserch");
 
 form.addEventListener("submit", function(event) {
-  event.preventDefault(); 
+  event.preventDefault();
 
-  const un = document.getElementById("username").value;
-  const pn = document.getElementById("phnumber").value;
+  const name = document.getElementById("username").value.trim();
+  const school = document.getElementById("school").value.trim();
+  const phone = document.getElementById("phnumber").value.trim();
 
-  if (un === "김형석" && pn === "01011223344") {
-    alert("아이디 찾기 성공!");
-    alert("아이디: hs1234")
+  const users = JSON.parse(localStorage.getItem("users")) || [];
+  const user = users.find(u => u.name === name && u.school === school && u.phone === phone);
+
+  if (user) {
+    alert("아이디 찾기 성공!\n아이디: " + user.id);
   } else {
-    alert("존재하지 않는 정보입니다.");
+    alert("일치하는 회원 정보가 없습니다.");
   }
 });

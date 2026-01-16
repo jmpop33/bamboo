@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>형석고등학교 스터디 매칭</title>
 
-    <!-- favicon (static 폴더 기준) -->
     <link rel="icon" href="hsi.png" />
     <link rel="apple-touch-icon" href="hsi.png" />
 
@@ -107,11 +106,8 @@
             background: #f6f8ff;
             cursor: pointer;
             white-space: nowrap;
-            /* 글자 줄바꿈 금지 */
             flex: 0 0 auto;
-            /* 칩이 내용만큼 늘어나게 */
             line-height: 1;
-            /* 글자 높이 안정화 */
         }
         
         button {
@@ -148,7 +144,6 @@
     <h1>형석고등학교 스터디그룹 매칭</h1>
     <p><small>추천 학생들끼리 스터디그룹을 자동으로 매칭합니다.</small></p>
 
-    <!-- 1) 내 정보 -->
     <div class="card">
         <h2>1) 내 정보 입력</h2>
 
@@ -196,13 +191,11 @@
         <button class="btn2" onclick="clearCandidates()">후보 초기화</button>
     </div>
 
-    <!-- 2) 후보 -->
     <div class="card">
         <h2>2) 후보 목록</h2>
         <ul id="candList" class="list"></ul>
     </div>
 
-    <!-- 3) 추천 -->
     <div class="card">
         <h2>3) 추천</h2>
         <label>TOP N</label>
@@ -211,7 +204,6 @@
         <ol id="resultList"></ol>
     </div>
 
-    <!-- ================= JS (Flask 연동) ================= -->
     <script>
         function getCheckedSubjects(containerId) {
             const boxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>형석고등학교 스터디 매칭</title>
+
+    <!-- favicon (static 폴더 기준) -->
+    <link rel="icon" href="hsi.png" />
+    <link rel="apple-touch-icon" href="hsi.png" />
+
+    <style>
+         :root {
+            --bg: #f4f6fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --line: #e5e7eb;
+            --shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            --radius: 18px;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 16px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin: 0 0 6px 0;
+        }
+        
+        h2 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+        }
+        
+        h3 {
+            margin: 14px 0 10px;
+            font-size: 16px;
+        }
+        
+        small {
+            color: var(--muted);
+        }
+        
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 22px;
+            margin: 16px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            font-size: 14px;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        @media (max-width: 640px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .subjects {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        
+        .subjects label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: #f6f8ff;
+            cursor: pointer;
+            white-space: nowrap;
+            /* 글자 줄바꿈 금지 */
+            flex: 0 0 auto;
+            /* 칩이 내용만큼 늘어나게 */
+            line-height: 1;
+            /* 글자 높이 안정화 */
+        }
+        
+        button {
+            padding: 12px 16px;
+            border: 0;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 800;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #5b7cff, #6a5cff);
+            color: white;
+        }
+        
+        .btn2 {
+            background: #f3f4f6;
+            border: 1px solid var(--line);
+        }
+        
+        .list li,
+        #resultList li {
+            margin: 10px 0;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #f8f9ff;
+            border: 1px solid var(--line);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>형석고등학교 스터디그룹 매칭</h1>
+    <p><small>추천 학생들끼리 스터디그룹을 자동으로 매칭합니다.</small></p>
+
+    <!-- 1) 내 정보 -->
+    <div class="card">
+        <h2>1) 내 정보 입력</h2>
+
+        <div class="row">
+            <div>
+                <label>학년</label>
+                <select id="myGrade">
+                    <option value="1">1학년</option>
+                    <option value="2">2학년</option>
+                    <option value="3">3학년</option>
+                </select>
+            </div>
+            <div>
+                <label>계열</label>
+                <select id="myTrack">
+                    <option value="인문">인문</option>
+                    <option value="자연">자연</option>
+                    <option value="공학">공학</option>
+                    <option value="예체능">예체능</option>
+                </select>
+            </div>
+        </div>
+
+        <label>공부할 과목</label>
+        <div class="subjects" id="mySubjects">
+            <label><input type="checkbox" value="국"> 국어</label>
+            <label><input type="checkbox" value="영"> 영어</label>
+            <label><input type="checkbox" value="수"> 수학</label>
+            <label><input type="checkbox" value="사"> 사회</label>
+            <label><input type="checkbox" value="과"> 과학</label>
+        </div>
+
+        <div class="row">
+            <div>
+                <label>공부 기간(주)</label>
+                <input id="myDuration" type="number" value="4">
+            </div>
+            <div>
+                <label>선호 인원</label>
+                <input id="mySize" type="number" value="3">
+            </div>
+        </div>
+
+        <button class="btn" onclick="addMeToCandidates()">내 정보 저장</button>
+        <button class="btn2" onclick="clearCandidates()">후보 초기화</button>
+    </div>
+
+    <!-- 2) 후보 -->
+    <div class="card">
+        <h2>2) 후보 목록</h2>
+        <ul id="candList" class="list"></ul>
+    </div>
+
+    <!-- 3) 추천 -->
+    <div class="card">
+        <h2>3) 추천</h2>
+        <label>TOP N</label>
+        <input id="topN" type="number" value="5">
+        <button class="btn" onclick="recommend()">추천하기</button>
+        <ol id="resultList"></ol>
+    </div>
+
+    <!-- ================= JS (Flask 연동) ================= -->
+    <script>
+        function getCheckedSubjects(containerId) {
+            const boxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);
+            return [...boxes].filter(b => b.checked).map(b => b.value);
+        }
+
+        async function fetchCandidates() {
+            const res = await fetch("/api/candidates");
+            const data = await res.json();
+            const ul = document.getElementById("candList");
+            ul.innerHTML = "";
+
+            if (data.candidates.length === 0) {
+                ul.innerHTML = "<li>후보 없음</li>";
+                return;
+            }
+
+            data.candidates.forEach(s => {
+                const li = document.createElement("li");
+                li.textContent =
+                    `${s.id} | ${s.grade}학년 | ${s.track} | ${s.subjects.join("/")}`;
+                ul.appendChild(li);
+            });
+        }
+
+        async function addMeToCandidates() {
+            const body = {
+                grade: myGrade.value,
+                track: myTrack.value,
+                subjects: getCheckedSubjects("mySubjects"),
+                duration: myDuration.value,
+                size: mySize.value
+            };
+
+            await fetch("/api/candidates", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+
+            fetchCandidates();
+        }
+
+        async function clearCandidates() {
+            await fetch("/api/candidates", {
+                method: "DELETE"
+            });
+            fetchCandidates();
+            resultList.innerHTML = "";
+        }
+
+        async function recommend() {
+            const body = {
+                grade: myGrade.value,
+                track: myTrack.value,
+                subjects: getCheckedSubjects("mySubjects"),
+                duration: myDuration.value,
+                size: mySize.value,
+                topN: topN.value
+            };
+
+            const res = await fetch("/api/recommend", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+            resultList.innerHTML = "";
+
+            data.results.forEach(r => {
+                const li = document.createElement("li");
+                li.textContent = `${r.candidate_id} | ${r.score.toFixed(1)} | ${r.why}`;
+                resultList.appendChild(li);
+            });
+        }
+
+        fetchCandidates();
+    </script>
+
+</body>
+
+</html>
